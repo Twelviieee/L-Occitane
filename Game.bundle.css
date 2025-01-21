@@ -1,0 +1,104 @@
+.game-ui {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    font-family: "Nickainley";
+    font-size: 3.5rem;
+    line-height: .75;
+    color: #fff
+}
+
+.game-ui--blue {
+    color: #091352
+}
+
+.game-ui__wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between
+}
+
+.game-ui__resources {
+    justify-content: flex-start
+}
+
+.game-ui__resources,.game-ui__score {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap
+}
+
+.game-ui__resources-number,.game-ui__score-number {
+    margin-right: -5px;
+    margin-left: -5px;
+    padding: 5px
+}
+
+.game-ui__score {
+    justify-content: flex-end
+}
+
+.game-ui__resource {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    justify-content: center;
+    background: #fff;
+    border-radius: 50%
+}
+
+.game-ui__resource+.game-ui__resource {
+    margin-left: 2px
+}
+
+.game-ui__resource--water svg {
+    width: 40%;
+    height: 40%;
+    fill: #08abf5
+}
+
+.game-ui__resource--sun svg {
+    width: 60%;
+    height: 60%;
+    fill: #fabe0d
+}
+
+.game-ui__resources-multiplier {
+    display: flex;
+    display: block;
+    align-items: center;
+    margin: .2em;
+    font-size: 2.8rem;
+    transform: scaleY(1.8) rotate(38deg)
+}
+
+@media only screen and (min-width: 800px) {
+    .game-ui__resource {
+        width:35px;
+        height: 35px
+    }
+}
+
+@media only screen and (max-width: 799px) {
+    .game-ui {
+        font-size:2.4rem
+    }
+
+    .game-ui__title {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        width: 70%;
+        margin-left: -35%
+    }
+
+    .game-ui__title .title {
+        font-size: 2.3rem
+    }
+
+    .game-ui__resource {
+        width: 24px;
+        height: 24px
+    }
+}

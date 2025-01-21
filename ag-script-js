@@ -1,0 +1,1812 @@
+(function() {
+    try {
+        var AG_onLoad = function(func) {
+            if (document.readyState === "complete" || document.readyState === "interactive")
+                func();
+            else if (document.addEventListener)
+                document.addEventListener("DOMContentLoaded", func);
+            else if (document.attachEvent)
+                document.attachEvent("DOMContentLoaded", func)
+        };
+        ;var AG_removeElementById = function(id) {
+            var element = document.getElementById(id);
+            if (element && element.parentNode) {
+                element.parentNode.removeChild(element);
+            }
+        };
+        ;var AG_removeElementBySelector = function(selector) {
+            if (!document.querySelectorAll) {
+                return;
+            }
+            var nodes = document.querySelectorAll(selector);
+            if (nodes) {
+                for (var i = 0; i < nodes.length; i++) {
+                    if (nodes[i] && nodes[i].parentNode) {
+                        nodes[i].parentNode.removeChild(nodes[i]);
+                    }
+                }
+            }
+        };
+        ;var AG_each = function(selector, fn) {
+            if (!document.querySelectorAll)
+                return;
+            var elements = document.querySelectorAll(selector);
+            for (var i = 0; i < elements.length; i++) {
+                fn(elements[i]);
+            }
+            ;
+        };
+        ;var AG_removeParent = function(el, fn) {
+            while (el && el.parentNode) {
+                if (fn(el)) {
+                    el.parentNode.removeChild(el);
+                    return;
+                }
+                el = el.parentNode;
+            }
+        };
+        ;var AG_removeCookie = function(a) {
+            var e = /./;
+            /^\/.+\/$/.test(a) ? e = new RegExp(a.slice(1, -1)) : "" !== a && (e = new RegExp(a.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+            a = function() {
+                for (var a = document.cookie.split(";"), g = a.length; g--; ) {
+                    cookieStr = a[g];
+                    var d = cookieStr.indexOf("=");
+                    if (-1 !== d && (d = cookieStr.slice(0, d).trim(),
+                    e.test(d)))
+                        for (var h = document.location.hostname.split("."), f = 0; f < h.length - 1; f++) {
+                            var b = h.slice(f).join(".");
+                            if (b) {
+                                var c = d + "="
+                                  , k = "; domain=" + b;
+                                b = "; domain=." + b;
+                                document.cookie = c + "; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                                document.cookie = c + k + "; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                                document.cookie = c + b + "; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                                document.cookie = c + "; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                                document.cookie = c + k + "; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                                document.cookie = c + b + "; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"
+                            }
+                        }
+                }
+            }
+            ;
+            a();
+            window.addEventListener("beforeunload", a)
+        };
+        ;var AG_defineProperty = function() {
+            var p, q = Object.defineProperty;
+            if ("function" == typeof WeakMap)
+                p = WeakMap;
+            else {
+                var r = 0
+                  , t = function() {
+                    this.a = (r += Math.random()).toString()
+                };
+                t.prototype.set = function(a, b) {
+                    var d = a[this.a];
+                    d && d[0] === a ? d[1] = b : q(a, this.a, {
+                        value: [a, b],
+                        writable: !0
+                    });
+                    return this
+                }
+                ;
+                t.prototype.get = function(a) {
+                    var b;
+                    return (b = a[this.a]) && b[0] === a ? b[1] : void 0
+                }
+                ;
+                t.prototype.has = function(a) {
+                    var b = a[this.a];
+                    return b ? b[0] === a : !1
+                }
+                ;
+                p = t
+            }
+            function u(a) {
+                this.b = a;
+                this.h = Object.create(null)
+            }
+            function v(a, b, d, e) {
+                this.a = a;
+                this.i = b;
+                this.c = d;
+                this.f = e
+            }
+            function w() {
+                this.g = /^([^\\\.]|\\.)*?\./;
+                this.j = /\\(.)/g;
+                this.a = new p
+            }
+            function x(a, b) {
+                var d = b.f;
+                if (d && !("beforeGet"in d || "beforeSet"in d))
+                    return z(d);
+                var e = {
+                    get: function() {
+                        var c = b.f;
+                        c && c.beforeGet && c.beforeGet.call(this, b.a.b);
+                        a: if (c = b.g)
+                            c = A(c) ? c.value : c.get ? c.get.call(this) : void 0;
+                        else {
+                            c = b.a.b;
+                            if (b.i in c && (c = B(c),
+                            null !== c)) {
+                                var d = C.call(c, b.i);
+                                c = d ? d.call(this) : c[b.i];
+                                break a
+                            }
+                            c = void 0
+                        }
+                        (this === b.a.b || D.call(b.a.b, this)) && E(a, c, b.c);
+                        return c
+                    },
+                    set: function(c) {
+                        if (this === b.a.b || D.call(b.a.b, this)) {
+                            b.f && b.f.beforeSet && (c = b.f.beforeSet.call(this, c, this));
+                            var d = b.g;
+                            d && A(d) && d.value === c ? c = !0 : (d = F(b, c, this),
+                            G(c) && (c = H(a, c),
+                            I(a, c, b.c)),
+                            c = d)
+                        } else
+                            c = F(b, c, this);
+                        return c
+                    }
+                };
+                d && J(d, e, K);
+                return e
+            }
+            function I(a, b, d) {
+                for (var e in d.h) {
+                    var c = d.h[e];
+                    if (b.h[e]) {
+                        var h = a
+                          , g = b.h[e]
+                          , k = c;
+                        !k.f || g.f || "undefined" === typeof g.a.b || g.g || (g.g = z(k.f));
+                        g.c && k.c && g.c !== k.c && I(h, g.c, k.c)
+                    } else {
+                        g = h = void 0;
+                        k = a;
+                        var f = b
+                          , l = c.i
+                          , m = "undefined" !== typeof f.b
+                          , y = !1;
+                        m && (g = L(f.b, l)) && !g.configurable && (y = !0,
+                        h = f.b[l]);
+                        var n = y ? H(k, h) : new u(c.c.b);
+                        I(k, n, c.c);
+                        n = new v(f,l,n,c.f);
+                        f.h[l] = n;
+                        m && (n.g = g,
+                        m = x(k, n),
+                        y ? E(k, h, c.c) : (q(f.b, l, m),
+                        g && A(g) && (M(m, g.value, f.b),
+                        E(k, g.value, c.c))))
+                    }
+                }
+            }
+            function E(a, b, d) {
+                G(b) && (b = H(a, b),
+                I(a, b, d))
+            }
+            function F(a, b, d) {
+                var e = a.g;
+                if (!e) {
+                    e = B(a.a.b);
+                    if (null !== e && (e = N.call(e, a.i)))
+                        return e.call(d, b);
+                    if (!O(a.a.b))
+                        return !1;
+                    a.g = {
+                        value: b,
+                        configurable: !0,
+                        writable: !0,
+                        enumerable: !0
+                    };
+                    return !0
+                }
+                return M(e, b, d)
+            }
+            function H(a, b) {
+                var d = a.a.get(b);
+                d || (d = new u(b),
+                a.a.set(b, d));
+                return d
+            }
+            function A(a) {
+                return "undefined" !== typeof a.writable
+            }
+            function J(a, b, d) {
+                for (var e = 0, c = d.length; e < c; e++) {
+                    var h = d[e];
+                    h in a && (b[h] = a[h])
+                }
+            }
+            function z(a) {
+                if (a) {
+                    var b = {};
+                    J(a, b, P);
+                    return b
+                }
+            }
+            function M(a, b, d) {
+                if (A(a))
+                    return a.writable ? (a.value = b,
+                    !0) : !1;
+                if (!a.set)
+                    return !1;
+                a.set.call(d, b);
+                return !0
+            }
+            var P = "configurable enumerable value get set writable".split(" ")
+              , K = P.slice(0, 2)
+              , L = Object.getOwnPropertyDescriptor
+              , O = Object.isExtensible
+              , B = Object.getPrototypeOf
+              , D = Object.prototype.isPrototypeOf
+              , C = Object.prototype.__lookupGetter__ || function(a) {
+                return (a = Q(this, a)) && a.get ? a.get : void 0
+            }
+              , N = Object.prototype.__lookupSetter__ || function(a) {
+                return (a = Q(this, a)) && a.set ? a.set : void 0
+            }
+            ;
+            function Q(a, b) {
+                if (b in a) {
+                    for (; !w.hasOwnProperty.call(a, b); )
+                        a = B(a);
+                    return L(a, b)
+                }
+            }
+            function G(a) {
+                var b = typeof a;
+                return "function" === b || "object" === b && null !== a ? !0 : !1
+            }
+            var R;
+            return function(a, b, d) {
+                R || (R = new w);
+                var e = R;
+                d = d || window;
+                var c = new u;
+                a += ".";
+                var h = c || new u;
+                for (var g = e.g, k = e.j, f, l, m; a; ) {
+                    f = g.exec(a);
+                    if (null === f)
+                        throw 1;
+                    f = f[0].length;
+                    l = a.slice(0, f - 1).replace(k, "$1");
+                    a = a.slice(f);
+                    (f = h.h[l]) ? m = f.c : (m = new u,
+                    f = new v(h,l,m),
+                    h.h[l] = f);
+                    h = m
+                }
+                if (!f)
+                    throw 1;
+                a = f;
+                a.f = b;
+                E(e, d, c)
+            }
+            ;
+        }();
+        ;var AG_abortOnPropertyWrite = function(a, b) {
+            var c = Math.random().toString(36).substr(2, 8);
+            AG_defineProperty(a, {
+                beforeSet: function() {
+                    b && console.warn("AdGuard aborted property write: " + a);
+                    throw new ReferenceError(c);
+                }
+            });
+            var d = window.onerror;
+            window.onerror = function(e) {
+                if ("string" === typeof e && -1 !== e.indexOf(c))
+                    return b && console.warn("AdGuard has caught window.onerror: " + a),
+                    !0;
+                if (d instanceof Function)
+                    return d.apply(this, arguments)
+            }
+        };
+        ;var AG_abortOnPropertyRead = function(a, b) {
+            var c = Math.random().toString(36).substr(2, 8);
+            AG_defineProperty(a, {
+                beforeGet: function() {
+                    b && console.warn("AdGuard aborted property read: " + a);
+                    throw new ReferenceError(c);
+                }
+            });
+            var d = window.onerror;
+            window.onerror = function(e) {
+                if ("string" === typeof e && -1 !== e.indexOf(c))
+                    return b && console.warn("AdGuard has caught window.onerror: " + a),
+                    !0;
+                if (d instanceof Function)
+                    return d.apply(this, arguments)
+            }
+        };
+        ;var AG_abortInlineScript = function(g, b, c) {
+            var d = function() {
+                if ("currentScript"in document)
+                    return document.currentScript;
+                var a = document.getElementsByTagName("script");
+                return a[a.length - 1]
+            }
+              , e = Math.random().toString(36).substr(2, 8)
+              , h = d();
+            AG_defineProperty(b, {
+                beforeGet: function() {
+                    var a = d();
+                    if (a instanceof HTMLScriptElement && a !== h && "" === a.src && g.test(a.textContent))
+                        throw c && console.warn("AdGuard aborted execution of an inline script"),
+                        new ReferenceError(e);
+                }
+            });
+            var f = window.onerror;
+            window.onerror = function(a) {
+                if ("string" === typeof a && -1 !== a.indexOf(e))
+                    return c && console.warn("AdGuard has caught window.onerror: " + b),
+                    !0;
+                if (f instanceof Function)
+                    return f.apply(this, arguments)
+            }
+        };
+        ;var AG_setConstant = function(e, a) {
+            if ("undefined" === a)
+                a = void 0;
+            else if ("false" === a)
+                a = !1;
+            else if ("true" === a)
+                a = !0;
+            else if ("noopFunc" === a)
+                a = function() {}
+                ;
+            else if ("trueFunc" === a)
+                a = function() {
+                    return !0
+                }
+                ;
+            else if ("falseFunc" === a)
+                a = function() {
+                    return !1
+                }
+                ;
+            else if (/^\d+$/.test(a)) {
+                if (a = parseFloat(a),
+                isNaN(a) || 32767 < Math.abs(a))
+                    return
+            } else
+                return;
+            var b = !1;
+            AG_defineProperty(e, {
+                get: function() {
+                    return a
+                },
+                set: function(c) {
+                    if (b)
+                        var d = !0;
+                    else
+                        void 0 !== c && void 0 !== a && typeof c !== typeof a && (b = !0),
+                        d = b;
+                    d && (a = c)
+                }
+            })
+        };
+        ;function noopFunc() {}
+        ;;function noopCallbackFunc() {
+            return noopFunc
+        }
+        ;;function trueFunc() {
+            return true
+        }
+        ;;function falseFunc() {
+            return false
+        }
+        ;;function noopArray() {
+            return []
+        }
+        ;;function noopObject() {
+            return {}
+        }
+        ;;function throwFunc() {
+            throw new Error()
+        }
+        ;;function getRequestData(t) {
+            return Object.fromEntries(getRequestProps().map(function(n) {
+                var r = t[n];
+                return [n, r]
+            }))
+        }
+        ;;function forgeResponse(e, t) {
+            var s = e.bodyUsed
+              , r = e.headers
+              , u = e.ok
+              , a = e.redirected
+              , d = e.status
+              , o = e.statusText
+              , l = e.type
+              , n = e.url
+              , v = new Response(t,{
+                status: d,
+                statusText: o,
+                headers: r
+            });
+            return Object.defineProperties(v, {
+                url: {
+                    value: n
+                },
+                type: {
+                    value: l
+                },
+                ok: {
+                    value: u
+                },
+                bodyUsed: {
+                    value: s
+                },
+                redirected: {
+                    value: a
+                }
+            }),
+            v
+        }
+        ;;function getFetchData(n, a) {
+            var e, t, c = {}, r = n[0];
+            if (r instanceof Request) {
+                var f = a.call(r)
+                  , i = getRequestData(f);
+                e = i.url,
+                t = i
+            } else
+                e = r,
+                t = n[1];
+            return c.url = e,
+            t instanceof Object && Object.keys(t).forEach(function(n) {
+                c[n] = t[n]
+            }),
+            c
+        }
+        ;;function getXhrData(t, n, r, a, e) {
+            return {
+                method: t,
+                url: n,
+                async: r,
+                user: a,
+                password: e
+            }
+        }
+        ;;function escapeRegExp(e) {
+            return e.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+        }
+        ;;function isValidParsedData(e) {
+            return Object.values(e).every(function(e) {
+                return isValidStrPattern(e)
+            })
+        }
+        ;;function isValidStrPattern(t) {
+            var r, n = escapeRegExp(t);
+            "/" === t[0] && "/" === t[t.length - 1] && (n = t.slice(1, -1));
+            try {
+                r = RegExp(n),
+                r = !0
+            } catch (a) {
+                r = !1
+            }
+            return r
+        }
+        ;;function getMatchPropsData(t) {
+            var a = {};
+            return Object.keys(t).forEach(function(n) {
+                a[n] = toRegExp(t[n])
+            }),
+            a
+        }
+        ;;function parseMatchProps(r) {
+            var e = {};
+            return r.split(" ").forEach(function(r) {
+                var i, c = r.indexOf(":"), n = r.slice(0, c);
+                if (i = n,
+                getRequestProps().includes(i)) {
+                    var s = r.slice(c + 1);
+                    e[n] = s
+                } else
+                    e.url = r
+            }),
+            e
+        }
+        ;;function matchRequestProps(r, e) {
+            if ("" === r || "*" === r)
+                return !0;
+            var t, n = parseMatchProps(r);
+            if (isValidParsedData(n)) {
+                var a = getMatchPropsData(n);
+                t = Object.keys(a).every(function(r) {
+                    var t = a[r]
+                      , n = e[r];
+                    return Object.prototype.hasOwnProperty.call(e, r) && "string" == typeof n && (null == t ? void 0 : t.test(n))
+                })
+            } else
+                console.log("Invalid parameter: ".concat(r)),
+                t = !1;
+            return t
+        }
+        ;;function getRequestProps() {
+            return ["url", "method", "headers", "body", "credentials", "cache", "redirect", "referrer", "referrerPolicy", "integrity", "keepalive", "signal", "mode"]
+        }
+        ;;function objectToString(n) {
+            return n && "object" == typeof n ? isEmptyObject(n) ? "{}" : Object.entries(n).map(function(n) {
+                var t = n[0]
+                  , o = n[1]
+                  , c = o;
+                return o instanceof Object && (c = "{ ".concat(objectToString(o), " }")),
+                "".concat(t, ':"').concat(c, '"')
+            }).join(" ") : String(n)
+        }
+        ;;function noopPromiseResolve(e="{}", t="", u="default") {
+            if ("undefined" == typeof Response)
+                return;
+            let n = new Response(e,{
+                status: 200,
+                statusText: "OK"
+            });
+            return Object.defineProperties(n, {
+                url: {
+                    value: t
+                },
+                type: {
+                    value: u
+                }
+            }),
+            Promise.resolve(n)
+        }
+        ;;function noopPromiseReject() {
+            return Promise.reject()
+        }
+        ;;function isIframe() {
+            try {
+                return window.self !== window.top
+            } catch (r) {
+                return !0
+            }
+        }
+        ;function isDelayMatched(e, n) {
+            return "*" === e || n === getMatchDelay(e)
+        }
+        ;;function nativeIsNaN(N) {
+            let a = Number.isNaN || window.isNaN;
+            return a(N)
+        }
+        ;;function isEmptyObject(t) {
+            return 0 === Object.keys(t).length && !t.prototype
+        }
+        ;;function isValidCallback(n) {
+            return n instanceof Function || "string" == typeof n
+        }
+        ;;function nativeIsFinite(i) {
+            let n = Number.isFinite || window.isFinite;
+            return n(i)
+        }
+        ;;function getMatchDelay(t) {
+            let e = parseInt(t, 10)
+              , n = nativeIsNaN(e) ? 1000 : e;
+            return n
+        }
+        ;;function getBoostMultiplier($) {
+            let t = parseFloat($)
+              , e = nativeIsNaN(t) || !nativeIsFinite(t) ? .05 : t;
+            return e < .001 && (e = .001),
+            e > 50 && (e = 50),
+            e
+        }
+        ;;function safeGetDescriptor(e, r) {
+            let t = Object.getOwnPropertyDescriptor(e, r);
+            return t && t.configurable ? t : null
+        }
+        ;;function createOnErrorHandler(n) {
+            let r = window.onerror;
+            return function e(t, ...o) {
+                return !!("string" == typeof t && t.includes(n)) || r instanceof Function && r.apply(window, [t, ...o])
+            }
+        }
+        ;;function setPropertyAccess(e, r, t) {
+            let n = Object.getOwnPropertyDescriptor(e, r);
+            return (!n || !!n.configurable) && (Object.defineProperty(e, r, t),
+            !0)
+        }
+        ;;function getDescriptorAddon() {
+            return {
+                isAbortingSuspended: !1,
+                isolateCallback(t, ...e) {
+                    this.isAbortingSuspended = !0;
+                    try {
+                        let i = t(...e);
+                        return this.isAbortingSuspended = !1,
+                        i
+                    } catch {
+                        let n = randomId();
+                        throw this.isAbortingSuspended = !1,
+                        ReferenceError(n)
+                    }
+                }
+            }
+        }
+        ;;function getPropertyInChain(e, n) {
+            let t = n.indexOf(".");
+            if (-1 === t)
+                return {
+                    base: e,
+                    prop: n
+                };
+            let r = n.slice(0, t);
+            if (null === e)
+                return {
+                    base: e,
+                    prop: r,
+                    chain: n
+                };
+            let i = e[r];
+            return (n = n.slice(t + 1),
+            (e instanceof Object || "object" == typeof e) && isEmptyObject(e) || null === i) ? {
+                base: e,
+                prop: r,
+                chain: n
+            } : void 0 !== i ? getPropertyInChain(i, n) : (Object.defineProperty(e, r, {
+                configurable: !0
+            }),
+            {
+                base: e,
+                prop: r,
+                chain: n
+            })
+        }
+        ;;function randomId() {
+            return Math.random().toString(36).slice(2, 9)
+        }
+        ;;function getNativeRegexpTest() {
+            let t = Object.getOwnPropertyDescriptor(RegExp.prototype, "test")
+              , e = t?.value;
+            if (t && "function" == typeof t.value)
+                return e;
+            throw Error("RegExp.prototype.test is not a function")
+        }
+        ;;function shouldAbortInlineOrInjectedScript(t, e) {
+            let i = "injectedScript"
+              , l = t => t.includes("inlineScript")
+              , r = t => t.includes(i);
+            if (!(l(t) || r(t)))
+                return !1;
+            let n = window.location.href
+              , s = n.indexOf("#");
+            -1 !== s && (n = n.slice(0, s));
+            let c = e.split("\n").slice(2).map(t => t.trim())
+              , d = c.map(t => {
+                let e, l = /(.*?@)?(\S+)(:\d+):\d+\)?$/.exec(t);
+                if (l) {
+                    let r = l[2];
+                    if (r?.startsWith("(") && (r = r.slice(1)),
+                    r?.startsWith("<anonymous>")) {
+                        r = i;
+                        let n = void 0 !== l[1] ? l[1].slice(0, -1) : t.slice(0, l.index).trim();
+                        n?.startsWith("at") && (n = n.slice(2).trim()),
+                        e = `${n} ${r}`.trim()
+                    } else
+                        e = r
+                } else
+                    e = t;
+                return e
+            }
+            );
+            if (d) {
+                for (let a = 0; a < d.length; a += 1)
+                    if (l(t) && n === d[a] || r(t) && d[a].startsWith(i))
+                        return !0
+            }
+            return !1
+        }
+        ;;function matchStackTrace(t, n) {
+            if (!t || "" === t || shouldAbortInlineOrInjectedScript(t, n))
+                return !0;
+            let c = toRegExp(t)
+              , i = n.split("\n").slice(2).map(t => t.trim()).join("\n");
+            return getNativeRegexpTest().call(c, i)
+        }
+        ;;function getWildcardPropertyInChain(r, e, i=!1, t=[]) {
+            let l = e.indexOf(".");
+            if (-1 === l) {
+                if ("*" === e || "[]" === e)
+                    for (let n in r)
+                        Object.prototype.hasOwnProperty.call(r, n) && t.push({
+                            base: r,
+                            prop: n
+                        });
+                else
+                    t.push({
+                        base: r,
+                        prop: e
+                    });
+                return t
+            }
+            let o = e.slice(0, l)
+              , a = "[]" === o && Array.isArray(r) || "*" === o && r instanceof Object;
+            if (a) {
+                let p = e.slice(l + 1)
+                  , c = Object.keys(r);
+                c.forEach(e => {
+                    let l = r[e];
+                    getWildcardPropertyInChain(l, p, i, t)
+                }
+                )
+            }
+            Array.isArray(r) && r.forEach(r => {
+                let l = r;
+                void 0 !== l && getWildcardPropertyInChain(l, e, i, t)
+            }
+            );
+            let d = r[o];
+            return e = e.slice(l + 1),
+            void 0 !== d && getWildcardPropertyInChain(d, e, i, t),
+            t
+        }
+        ;;function jsonPruner(t, e, o, r) {
+            if (0 === e.length && 0 === o.length)
+                return console.log(`${window.location.hostname}${JSON.stringify(t, null, 2)}Stack trace:${Error().stack}`, !0),
+                t && "object" == typeof t && console.log(t, !0, !1),
+                t;
+            try {
+                if (!1 === isPruningNeeded(t, e, o, r))
+                    return t;
+                e.forEach(e => {
+                    let o = getWildcardPropertyInChain(t, e, !0);
+                    o.forEach(t => {
+                        void 0 !== t && t.base && delete t.base[t.prop]
+                    }
+                    )
+                }
+                )
+            } catch (n) {
+                console.log(n)
+            }
+            return t
+        }
+        ;;function isPruningNeeded(t, e, n, l) {
+            if (!t)
+                return !1;
+            let i;
+            if (0 === e.length && n.length > 0) {
+                let r = JSON.stringify(t);
+                if (toRegExp(n.join("")).test(r))
+                    return console.log(`${window.location.hostname}${JSON.stringify(t, null, 2)}Stack trace:${Error().stack}`, !0),
+                    t && "object" == typeof t && console.log(t, !0, !1),
+                    i = !1
+            }
+            if (l && !matchStackTrace(l, Error().stack || ""))
+                return !1;
+            let o = [".*.", "*.", ".*", ".[].", "[].", ".[]"];
+            for (let f = 0; f < n.length; f += 1) {
+                let s = n[f]
+                  , g = s.split(".").pop()
+                  , a = o.some(t => s.includes(t))
+                  , c = getWildcardPropertyInChain(t, s, a);
+                if (!c.length) {
+                    i = !1;
+                    break
+                }
+                i = !a;
+                for (let u = 0; u < c.length; u += 1) {
+                    let $ = "string" == typeof g && void 0 !== c[u].base[g];
+                    i = a ? $ || i : $ && i
+                }
+            }
+            return i
+        }
+        ;;function toRegExp() {
+            var t = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "";
+            if ("" === t)
+                return RegExp(".?");
+            var r, e, n = t.lastIndexOf("/"), i = t.substring(n + 1), s = t.substring(0, n + 1), a = (r = s,
+            e = i,
+            r.startsWith("/") && r.endsWith("/") && !r.endsWith("\\/") && function t(r) {
+                if (!r)
+                    return !1;
+                try {
+                    return RegExp("", r),
+                    !0
+                } catch (e) {
+                    return !1
+                }
+            }(e) ? e : "");
+            return t.startsWith("/") && t.endsWith("/") || a ? RegExp((a ? s : t).slice(1, -1), a) : RegExp(t.replace(/\/'/g, "'").replace(/\\"/g, '"').replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+        }
+        ;;function parseNodeTextParams(t, s, e=null) {
+            let r = !(t.startsWith("/") && t.endsWith("/")), a = r ? t : toRegExp(t), i = s.startsWith("/") ? toRegExp(s) : s, n;
+            return e && (n = e.startsWith("/") ? toRegExp(e) : e),
+            {
+                selector: r ? t : "*",
+                nodeNameMatch: a,
+                textContentMatch: i,
+                patternMatch: n
+            }
+        }
+        ;;function isTargetNode(e, t, n) {
+            let {nodeName: s, textContent: o} = e
+              , i = s.toLowerCase();
+            return null !== o && "" !== o && (t instanceof RegExp ? t.test(i) : t === i) && (n instanceof RegExp ? n.test(o) : o.includes(n))
+        }
+        ;;function replaceNodeText(e, t, n) {
+            let {textContent: o} = e;
+            o && !e.id && (e.textContent = o.replace(t, n),
+            console.log("textContent", e))
+        }
+        ;;function nodeListToArray(t) {
+            let e = [];
+            for (let n = 0; n < t.length; n += 1)
+                e.push(t[n]);
+            return e
+        }
+        ;;function handleExistingNodes(e, l) {
+            let n = document.querySelectorAll(e)
+              , t = nodeListToArray(n);
+            l(t)
+        }
+        ;;function getAddedNodes(e) {
+            let t = [];
+            for (let l = 0; l < e.length; l += 1) {
+                let {addedNodes: n} = e[l];
+                for (let d = 0; d < n.length; d += 1)
+                    t.push(n[d])
+            }
+            return t
+        }
+        ;;function observeDocumentWithTimeout(e, n, t=1e4) {
+            let o = new MutationObserver( (t, o) => {
+                o.disconnect(),
+                e(t, o),
+                o.observe(document.documentElement, n)
+            }
+            );
+            o.observe(document.documentElement, n),
+            "number" == typeof t && setTimeout( () => o.disconnect(), t)
+        }
+        ;;function handleMutations(n, t) {
+            let a = getAddedNodes(n);
+            t(a)
+        }
+        ;;function substringAfter(n, t) {
+            if (!n)
+                return n;
+            const r = n.indexOf(t);
+            return r < 0 ? "" : n.substring(r + t.length)
+        }
+        ;function substringBefore(n, r) {
+            if (!n || !r)
+                return n;
+            const t = n.indexOf(r);
+            return t < 0 ? n : n.substring(0, t)
+        }
+        ;function logMessage(o, e, n=!1, s=!0) {
+            const {name: c, verbose: t} = o;
+            if (!n && !t)
+                return;
+            const g = console.log;
+            s ? g(`${c}: ${e}`) : g(`${c}:`, e)
+        }
+        ;function noopNull() {
+            return null
+        }
+        ;function getPreventGetter(e) {
+            return (n, t) => (!t || "closed" !== t) && ("function" == typeof e ? noopFunc : t && n[t])
+        }
+        ;function createDecoy(e) {
+            let t, o;
+            !function(e) {
+                e.Object = "object",
+                e.Iframe = "iframe"
+            }(t || (t = {})),
+            function(e) {
+                e.Object = "data",
+                e.Iframe = "src"
+            }(o || (o = {}));
+            const {replacement: r, url: n, delay: c} = e;
+            let a;
+            a = "obj" === r ? t.Object : t.Iframe;
+            const m = document.createElement(a);
+            return m instanceof HTMLObjectElement ? m[o.Object] = n : m instanceof HTMLIFrameElement && (m[o.Iframe] = n),
+            m.style.setProperty("height", "1px", "important"),
+            m.style.setProperty("position", "fixed", "important"),
+            m.style.setProperty("top", "-1px", "important"),
+            m.style.setProperty("width", "1px", "important"),
+            document.body.appendChild(m),
+            setTimeout(( () => m.remove()), 1e3 * c),
+            m
+        }
+        ;function handleOldReplacement(e) {
+            let n;
+            if (e) {
+                if ("trueFunc" === e)
+                    n = trueFunc;
+                else if (e.includes("=")) {
+                    if (e.startsWith("{") && e.endsWith("}")) {
+                        const t = e.slice(1, -1)
+                          , s = substringBefore(t, "=");
+                        "noopFunc" === substringAfter(t, "=") && (n = {},
+                        n[s] = noopFunc)
+                    }
+                }
+            } else
+                n = noopFunc;
+            return n
+        }
+        ;function parseMatchArg(t) {
+            const e = !!t && t?.startsWith("!")
+              , a = e ? t.slice(1) : t;
+            return {
+                isInvertedMatch: e,
+                matchRegexp: toRegExp(a),
+                matchValue: a
+            }
+        }
+        ;function isValidMatchStr(t) {
+            let i = t;
+            return t?.startsWith("!") && (i = t.slice(1)),
+            isValidStrPattern(i)
+        }
+        ;function parseRawDelay(a) {
+            const e = Math.floor(parseInt(a, 10));
+            return "number" != typeof e || nativeIsNaN(e) ? a : e
+        }
+        ;function isValidMatchNumber(t) {
+            let i = t;
+            t?.startsWith("!") && (i = t.slice(1));
+            const a = parseFloat(i);
+            return !nativeIsNaN(a) && nativeIsFinite(a)
+        }
+        ;function parseDelayArg(t) {
+            const a = t?.startsWith("!")
+              , e = a ? t.slice(1) : t
+              , n = parseInt(e, 10);
+            return {
+                isInvertedDelayMatch: a,
+                delayMatch: nativeIsNaN(n) ? null : n
+            }
+        }
+        ;function isPreventionNeeded({callback: a, delay: e, matchCallback: t, matchDelay: l}) {
+            if (!isValidCallback(a))
+                return !1;
+            if (!isValidMatchStr(t) || l && !isValidMatchNumber(l))
+                return !1;
+            const {isInvertedMatch: r, matchRegexp: c} = parseMatchArg(t)
+              , {isInvertedDelayMatch: i, delayMatch: n} = parseDelayArg(l)
+              , s = parseRawDelay(e);
+            let d = !1;
+            const h = String(a);
+            return d = null === n ? c.test(h) !== r : t ? c.test(h) !== r && s === n !== i : s === n !== i,
+            d
+        }
+        ;function validateType(e) {
+            return void 0 !== e
+        }
+        ;function validateListener(n) {
+            return void 0 !== n && ("function" == typeof n || "object" == typeof n && null !== n && "handleEvent"in n && "function" == typeof n.handleEvent)
+        }
+        ;function listenerToString(n) {
+            return "function" == typeof n ? n.toString() : n.handleEvent.toString()
+        }
+        ;function setConstant(e, t, i="", s="") {
+            if (!e || !matchStackTrace(i, Error().stack))
+                return;
+            let l = noopArray(), n = noopObject(), o;
+            if ("undefined" === t)
+                o = void 0;
+            else if ("false" === t)
+                o = !1;
+            else if ("true" === t)
+                o = !0;
+            else if ("null" === t)
+                o = null;
+            else if ("emptyArr" === t)
+                o = l;
+            else if ("emptyObj" === t)
+                o = n;
+            else if ("noopFunc" === t)
+                o = noopFunc;
+            else if ("noopCallbackFunc" === t)
+                o = noopCallbackFunc;
+            else if ("trueFunc" === t)
+                o = trueFunc;
+            else if ("falseFunc" === t)
+                o = falseFunc;
+            else if ("throwFunc" === t)
+                o = throwFunc;
+            else if ("noopPromiseResolve" === t)
+                o = noopPromiseResolve;
+            else if ("noopPromiseReject" === t)
+                o = noopPromiseReject;
+            else if (/^\d+$/.test(t)) {
+                if (nativeIsNaN(o = parseFloat(t)) || Math.abs(o) > 32767)
+                    return
+            } else if ("-1" === t)
+                o = -1;
+            else if ("" === t)
+                o = "";
+            else if ("yes" === t)
+                o = "yes";
+            else {
+                if ("no" !== t)
+                    return;
+                o = "no"
+            }
+            ["asFunction", "asCallback", "asResolved", "asRejected", ].includes(s) && (o = ({
+                asFunction: e => () => e,
+                asCallback: e => () => () => e,
+                asResolved: e => Promise.resolve(e),
+                asRejected: e => Promise.reject(e)
+            })[s](o));
+            let f = !1
+              , r = e => f || (f = void 0 !== e && void 0 !== o && typeof e != typeof o && null !== e)
+              , a = (e, t, i, s) => {
+                if (!s.init(e[t]))
+                    return !1;
+                let l = Object.getOwnPropertyDescriptor(e, t), n;
+                if (l instanceof Object) {
+                    if (!l.configurable) {
+                        let f = `Property '${t}' is not configurable`;
+                        return console.log(f),
+                        !1
+                    }
+                    e[t] = o,
+                    l.set instanceof Function && (n = l.set)
+                }
+                return Object.defineProperty(e, t, {
+                    configurable: i,
+                    get: () => s.get(),
+                    set(e) {
+                        void 0 !== n && n(e),
+                        s.set(e)
+                    }
+                }),
+                !0
+            }
+              , u = (e, t) => {
+                let i = getPropertyInChain(e, t)
+                  , {base: s} = i
+                  , {prop: l, chain: n} = i
+                  , f = {
+                    factValue: void 0,
+                    init(e) {
+                        return this.factValue = e,
+                        !0
+                    },
+                    get() {
+                        return this.factValue
+                    },
+                    set(e) {
+                        this.factValue !== e && (this.factValue = e,
+                        e instanceof Object && u(e, n))
+                    }
+                };
+                if (!n) {
+                    let c = a(s, l, !1, {
+                        init: e => !r(e),
+                        get: () => o,
+                        set(e) {
+                            r(e) && (o = e)
+                        }
+                    });
+                    c && console.log(`Property '${l}' is trapped`);
+                    return
+                }
+                if (void 0 !== s && null === s[l]) {
+                    a(s, l, !0, f);
+                    return
+                }
+                (s instanceof Object || "object" == typeof s) && isEmptyObject(s) && a(s, l, !0, f);
+                let p = e[l];
+                (p instanceof Object || "object" == typeof p && null !== p) && u(p, n),
+                a(s, l, !0, f)
+            }
+            ;
+            u(window, e)
+        }
+        ;;function trustedReplaceXhrResponse(e="", t="", r="") {
+            if ("undefined" == typeof Proxy)
+                return;
+            if ("" === e && "" !== t) {
+                console.log("Pattern argument should not be empty string.");
+                return
+            }
+            let l = "" === e && "" === t, a = window.XMLHttpRequest.prototype.open, p = window.XMLHttpRequest.prototype.send, n, s = (e, t, a) => {
+                if (n = getXhrData.apply(null, a),
+                l) {
+                    let p = `xhr( ${objectToString(n)} )`;
+                    return console.log(p, !0),
+                    Reflect.apply(e, t, a)
+                }
+                if (matchRequestProps(r, n) && (t.shouldBePrevented = !0),
+                t.shouldBePrevented) {
+                    t.collectedHeaders = [];
+                    let s = (e, t, r) => (t.collectedHeaders.push(r),
+                    Reflect.apply(e, t, r));
+                    t.setRequestHeader = new Proxy(t.setRequestHeader,{
+                        apply: s
+                    })
+                }
+                return Reflect.apply(e, t, a)
+            }
+            , o = (r, l, s) => {
+                if (!l.shouldBePrevented)
+                    return Reflect.apply(r, l, s);
+                let o = new XMLHttpRequest;
+                o.addEventListener("readystatechange", () => {
+                    if (4 !== o.readyState)
+                        return;
+                    let {readyState: r, response: a, responseText: p, responseURL: n, responseXML: s, status: d, statusText: u} = o
+                      , i = p || a;
+                    if ("string" != typeof i)
+                        return;
+                    let y = "*" === e ? /(\n|.)*/ : toRegExp(e)
+                      , c = i.replace(y, t);
+                    Object.defineProperties(l, {
+                        readyState: {
+                            value: r,
+                            writable: !1
+                        },
+                        responseURL: {
+                            value: n,
+                            writable: !1
+                        },
+                        responseXML: {
+                            value: s,
+                            writable: !1
+                        },
+                        status: {
+                            value: d,
+                            writable: !1
+                        },
+                        statusText: {
+                            value: u,
+                            writable: !1
+                        },
+                        response: {
+                            value: c,
+                            writable: !1
+                        },
+                        responseText: {
+                            value: c,
+                            writable: !1
+                        }
+                    }),
+                    setTimeout( () => {
+                        let e = new Event("readystatechange");
+                        l.dispatchEvent(e);
+                        let t = new Event("load");
+                        l.dispatchEvent(t);
+                        let r = new Event("loadend");
+                        l.dispatchEvent(r)
+                    }
+                    , 1)
+                }
+                ),
+                a.apply(o, [n.method, n.url]),
+                l.collectedHeaders.forEach(e => {
+                    let t = e[0]
+                      , r = e[1];
+                    o.setRequestHeader(t, r)
+                }
+                ),
+                l.collectedHeaders = [];
+                try {
+                    p.call(o, s)
+                } catch {
+                    return Reflect.apply(r, l, s)
+                }
+            }
+            ;
+            XMLHttpRequest.prototype.open = new Proxy(XMLHttpRequest.prototype.open,{
+                apply: s
+            }),
+            XMLHttpRequest.prototype.send = new Proxy(XMLHttpRequest.prototype.send,{
+                apply: o
+            })
+        }
+        ;;function setAndFreezeGlobalVariable(e, r) {
+            window[e] = r;
+            Object.defineProperty(window, e, {
+                value: r,
+                writable: !1
+            })
+        }
+        ;;function trustedReplaceFetchResponse(e="", n="", t="") {
+            if ("undefined" != typeof fetch && "undefined" != typeof Proxy && "undefined" != typeof Response) {
+                if ("" === e && "" !== n) {
+                    console.log("Pattern argument should not be empty string");
+                    return
+                }
+                var o, p = "" === e && "" === n, r = Request.prototype.clone, c = fetch, u = !1, a = function a(f, l, i) {
+                    return (o = getFetchData(i, r),
+                    p) ? (console.log("fetch( ".concat(objectToString(o), " )"), !0),
+                    Reflect.apply(f, l, i)) : (u = matchRequestProps(t, o)) ? c.apply(null, i).then(function(t) {
+                        return t.text().then(function(o) {
+                            var p = "*" === e ? /(\n|.)*/ : toRegExp(e)
+                              , r = o.replace(p, n);
+                            return forgeResponse(t, r)
+                        }).catch(function() {
+                            var e = objectToString(o)
+                              , n = "Response body can't be converted to text: ".concat(e);
+                            return console.log(n),
+                            Reflect.apply(f, l, i)
+                        })
+                    }).catch(function() {
+                        return Reflect.apply(f, l, i)
+                    }) : Reflect.apply(f, l, i)
+                };
+                fetch = new Proxy(fetch,{
+                    apply: a
+                })
+            }
+        }
+        ;;function jsonPrune(t, n, e="") {
+            let o = void 0 !== t && "" !== t ? t.split(/ +/) : []
+              , p = void 0 !== n && "" !== n ? n.split(/ +/) : []
+              , i = JSON.parse
+              , r = (...t) => {
+                let n = i.apply(JSON, t);
+                return jsonPruner(n, o, p, e)
+            }
+            ;
+            r.toString = i.toString.bind(i),
+            JSON.parse = r;
+            let l = Response.prototype.json
+              , s = function() {
+                let t = l.apply(this);
+                return t.then(t => jsonPruner(t, o, p, e))
+            };
+            "undefined" != typeof Response && (Response.prototype.json = s)
+        }
+        ;;function preventElementSrcLoading(e, t) {
+            var r, a;
+            if ("undefined" == typeof Proxy || "undefined" == typeof Reflect)
+                return;
+            let i = {
+                script: "data:text/javascript;base64,KCk9Pnt9",
+                img: "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+                iframe: "data:text/html;base64, PGRpdj48L2Rpdj4=",
+                link: "data:text/plain;base64,"
+            }, o;
+            if ("script" === e)
+                o = HTMLScriptElement;
+            else if ("img" === e)
+                o = HTMLImageElement;
+            else if ("iframe" === e)
+                o = HTMLIFrameElement;
+            else {
+                if ("link" !== e)
+                    return;
+                o = HTMLLinkElement
+            }
+            let n = window.trustedTypes && "function" == typeof window.trustedTypes.createPolicy, l;
+            n && (l = window.trustedTypes.createPolicy("AGPolicy", {
+                createScriptURL: e => e
+            }));
+            let s = "link" === e ? "href" : "src"
+              , p = "onerror"
+              , d = toRegExp(t)
+              , u = e => e.setAttribute("adguard", "matched")
+              , c = (t, r, a) => {
+                if (!a[0] || !a[1])
+                    return Reflect.apply(t, r, a);
+                let o = r.nodeName.toLowerCase()
+                  , n = a[0].toLowerCase()
+                  , l = a[1]
+                  , p = n === s && e.toLowerCase() === o && i[o] && d.test(l);
+                return p ? (u(r),
+                Reflect.apply(t, r, [n, i[o]])) : Reflect.apply(t, r, a)
+            }
+            ;
+            o.prototype.setAttribute = new Proxy(Element.prototype.setAttribute,{
+                apply: c
+            });
+            let f = safeGetDescriptor(o.prototype, s);
+            if (!f)
+                return;
+            Object.defineProperty(o.prototype, s, {
+                enumerable: !0,
+                configurable: !0,
+                get() {
+                    return f.get.call(this)
+                },
+                set(t) {
+                    let r = this.nodeName.toLowerCase()
+                      , a = e.toLowerCase() === r && i[r] && d.test(t);
+                    if (!a)
+                        return f.set.call(this, t),
+                        !0;
+                    if (l && t instanceof TrustedScriptURL) {
+                        let o = l.createScriptURL(t);
+                        f.set.call(this, o);
+                        return
+                    }
+                    u(this),
+                    f.set.call(this, i[r])
+                }
+            });
+            let A = safeGetDescriptor(HTMLElement.prototype, p);
+            if (!A)
+                return;
+            Object.defineProperty(HTMLElement.prototype, p, {
+                enumerable: !0,
+                configurable: !0,
+                get() {
+                    return A.get.call(this)
+                },
+                set(e) {
+                    let t = "matched" === this.getAttribute("adguard");
+                    return t ? (A.set.call(this, noopFunc),
+                    !0) : (A.set.call(this, e),
+                    !0)
+                }
+            });
+            let y = (e, t, r) => {
+                if (!r[0] || !r[1] || !t)
+                    return Reflect.apply(e, t, r);
+                let a = r[0]
+                  , i = "function" == typeof t.getAttribute && "matched" === t.getAttribute("adguard") && "error" === a;
+                return i ? Reflect.apply(e, t, [a, noopFunc]) : Reflect.apply(e, t, r)
+            }
+            ;
+            EventTarget.prototype.addEventListener = new Proxy(EventTarget.prototype.addEventListener,{
+                apply: y
+            }),
+            r = e,
+            a = d,
+            window.addEventListener("error", e => {
+                if (e.target && e.target.nodeName && e.target.nodeName.toLowerCase() === r && e.target.src && a.test(e.target.src)) {
+                    if ("function" == typeof e.target.onload) {
+                        e.target.onerror = e.target.onload;
+                        return
+                    }
+                    e.target.onerror = noopFunc
+                }
+            }
+            , !0)
+        }
+        ;function createAndInjectStyleTag(e) {
+            let t = document.createElement("style");
+            t.type = "text/css",
+            t.textContent = e,
+            document.documentElement.appendChild(t)
+        }
+        ;;function adjustSetInterval(t, e, a) {
+            let l = window.setInterval
+              , n = toRegExp(t)
+              , c = (t, c, ...i) => (isValidCallback(t) ? n.test(t.toString()) && isDelayMatched(e, c) && (c *= getBoostMultiplier(a)) : console.log("Scriptlet can't be applied because of invalid callback"),
+            l.apply(window, [t, c, ...i]));
+            window.setInterval = c
+        }
+        ;;function abortOnPropertyWrite(e) {
+            if (!e)
+                return;
+            let t = randomId()
+              , r = () => {
+                throw ReferenceError(t)
+            }
+              , n = (e, t) => {
+                let o = getPropertyInChain(e, t)
+                  , {base: i} = o
+                  , {prop: f, chain: l} = o;
+                if (l) {
+                    let p = e => {
+                        i = e,
+                        e instanceof Object && n(e, l)
+                    }
+                    ;
+                    Object.defineProperty(e, f, {
+                        get: () => i,
+                        set: p
+                    });
+                    return
+                }
+                setPropertyAccess(i, f, {
+                    set: r
+                })
+            }
+            ;
+            n(window, e),
+            window.onerror = createOnErrorHandler(t).bind()
+        }
+        ;;function abortOnPropertyRead(e) {
+            if (!e)
+                return;
+            let t = randomId()
+              , r = () => {
+                throw ReferenceError(t)
+            }
+              , n = (e, t) => {
+                let o = getPropertyInChain(e, t)
+                  , {base: i} = o
+                  , {prop: f, chain: a} = o;
+                if (a) {
+                    let d = e => {
+                        i = e,
+                        e instanceof Object && n(e, a)
+                    }
+                    ;
+                    Object.defineProperty(e, f, {
+                        get: () => i,
+                        set: d
+                    });
+                    return
+                }
+                setPropertyAccess(i, f, {
+                    get: r,
+                    set() {}
+                })
+            }
+            ;
+            n(window, e),
+            window.onerror = createOnErrorHandler(t).bind()
+        }
+        ;;function abortCurrentInlineScript(t, e) {
+            let n = toRegExp(e)
+              , r = randomId()
+              , i = "data:text/javascript;base64,"
+              , l = () => {
+                if ("currentScript"in document)
+                    return document.currentScript;
+                let t = document.getElementsByTagName("script");
+                return t[t.length - 1]
+            }
+              , s = l()
+              , a = () => {
+                let t = l();
+                if (!t)
+                    return;
+                let e = t.textContent;
+                try {
+                    let a = Object.getOwnPropertyDescriptor(Node.prototype, "textContent").get;
+                    e = a.call(t)
+                } catch (c) {}
+                if (0 === e.length && void 0 !== t.src && t.src?.startsWith(i)) {
+                    let o = t.src.slice(i.length);
+                    e = window.atob(o)
+                }
+                if (t instanceof HTMLScriptElement && e.length > 0 && t !== s && n.test(e))
+                    throw ReferenceError(r)
+            }
+              , c = (t, e) => {
+                let n = getPropertyInChain(t, e)
+                  , {base: r} = n
+                  , {prop: i, chain: l} = n;
+                if (!(r instanceof Object) && null === r) {
+                    let s = e.split(".")
+                      , o = s.indexOf(i)
+                      , g = s[o - 1]
+                      , u = `The scriptlet had been executed before the ${g} was loaded.`;
+                    console.log(u);
+                    return
+                }
+                if (l) {
+                    let f = t => {
+                        r = t,
+                        t instanceof Object && c(t, l)
+                    }
+                    ;
+                    Object.defineProperty(t, i, {
+                        get: () => r,
+                        set: f
+                    });
+                    return
+                }
+                let h = r[i]
+                  , p = Object.getOwnPropertyDescriptor(r, i);
+                p instanceof Object && p.get instanceof Function || (h = r[i],
+                p = void 0);
+                let d = Object.assign(getDescriptorAddon(), {
+                    currentValue: h,
+                    get() {
+                        return (this.isAbortingSuspended || this.isolateCallback(a),
+                        p instanceof Object) ? p.get.call(r) : this.currentValue
+                    },
+                    set(t) {
+                        this.isAbortingSuspended || this.isolateCallback(a),
+                        p instanceof Object ? p.set.call(r, t) : this.currentValue = t
+                    }
+                });
+                setPropertyAccess(r, i, {
+                    get: () => d.get.call(d),
+                    set(t) {
+                        d.set.call(d, t)
+                    }
+                })
+            }
+            ;
+            c(window, t),
+            window.onerror = createOnErrorHandler(r).bind()
+        }
+        ;;function debugCurrentInlineScript(t, e) {
+            let r = toRegExp(e)
+              , n = randomId()
+              , i = () => {
+                if ("currentScript"in document)
+                    return document.currentScript;
+                let t = document.getElementsByTagName("script");
+                return t[t.length - 1]
+            }
+              , l = i()
+              , c = () => {
+                let t = i();
+                if (!t)
+                    return;
+                let e = t.textContent;
+                try {
+                    let n = Object.getOwnPropertyDescriptor(Node.prototype, "textContent").get;
+                    e = n.call(t)
+                } catch (c) {}
+                0 === e.length && void 0 !== t.src && t.src?.startsWith("data:text/javascript;base64,") && alert(e),
+                t instanceof HTMLScriptElement && e.length > 0 && t !== l && r.test(e) && alert(e)
+            }
+              , o = (t, e) => {
+                let r = getPropertyInChain(t, e)
+                  , {base: n} = r
+                  , {prop: i, chain: l} = r;
+                if (n instanceof Object == !1 && null === n) {
+                    let s = e.split(".")
+                      , a = s.indexOf(i)
+                      , p = s[a - 1]
+                      , u = `The scriptlet had been executed before the ${p} was loaded.`;
+                    console.log(u);
+                    return
+                }
+                if (l) {
+                    let f = t => {
+                        n = t,
+                        t instanceof Object && o(t, l)
+                    }
+                    ;
+                    Object.defineProperty(t, i, {
+                        get: () => n,
+                        set: f
+                    });
+                    return
+                }
+                let g = n[i];
+                setPropertyAccess(n, i, {
+                    set(t) {
+                        c(),
+                        g = t
+                    },
+                    get: () => (c(),
+                    g)
+                })
+            }
+            ;
+            o(window, t),
+            window.onerror = createOnErrorHandler(n).bind()
+        }
+        ;;function abortOnStackTrace(t, e) {
+            if (!t || !e)
+                return;
+            let i = randomId()
+              , r = () => {
+                throw ReferenceError(i)
+            }
+              , a = (t, i) => {
+                let n = getPropertyInChain(t, i)
+                  , {base: s} = n
+                  , {prop: l, chain: c} = n;
+                if (c) {
+                    let o = t => {
+                        s = t,
+                        t instanceof Object && a(t, c)
+                    }
+                    ;
+                    Object.defineProperty(t, l, {
+                        get: () => s,
+                        set: o
+                    });
+                    return
+                }
+                if (!e.match(/^(inlineScript|injectedScript)$/) && !isValidStrPattern(e)) {
+                    console.log(`Invalid parameter: ${e}`);
+                    return
+                }
+                let u = Object.assign(getDescriptorAddon(), {
+                    value: s[l],
+                    get() {
+                        return !this.isAbortingSuspended && this.isolateCallback(matchStackTrace, e, Error().stack) && r(),
+                        this.value
+                    },
+                    set(t) {
+                        !this.isAbortingSuspended && this.isolateCallback(matchStackTrace, e, Error().stack) && r(),
+                        this.value = t
+                    }
+                });
+                setPropertyAccess(s, l, {
+                    get: () => u.get.call(u),
+                    set(t) {
+                        u.set.call(u, t)
+                    }
+                })
+            }
+            ;
+            a(window, t),
+            window.onerror = createOnErrorHandler(i).bind()
+        }
+        ;;function removeNodeText(e, t) {
+            let {selector: o, nodeNameMatch: c, textContentMatch: l} = parseNodeTextParams(e, t)
+              , n = e => e.forEach(e => {
+                let t = isTargetNode(e, c, l);
+                t && replaceNodeText(e, /^.*$/s, "")
+            }
+            );
+            document.documentElement && handleExistingNodes(o, n),
+            observeDocumentWithTimeout(e => handleMutations(e, n), {
+                childList: !0,
+                subtree: !0
+            })
+        }
+        ;;function preventEvalIf(t) {
+            let n = toRegExp(t)
+              , e = window.eval;
+            window.eval = (function(t) {
+                if (!n.test(t.toString()))
+                    return e.call(window, t)
+            }
+            ).bind(window)
+        }
+        ;function preventWindowOpen(e="*", t, n) {
+            let l = window.open
+              , o = "0" !== e && "1" !== e
+              , i = (o, ...i) => {
+                if (e = Number(e) > 0,
+                !isValidStrPattern(t))
+                    return l.apply(window, [o, ...i]);
+                let r = toRegExp(t);
+                return e !== r.test(o) ? l.apply(window, [o, ...i]) : handleOldReplacement(n)
+            }
+              , r = (o, ...i) => {
+                let r = n && n.includes("log");
+                r && i && i.length > 0 && i.join(", ");
+                let p = !1;
+                if ("*" === e)
+                    p = !0;
+                else if (isValidMatchStr(e)) {
+                    let {isInvertedMatch: d, matchRegexp: f} = parseMatchArg(e);
+                    p = f.test(o) !== d
+                } else
+                    p = !1;
+                if (p) {
+                    let u = parseInt(t, 10), c;
+                    if (nativeIsNaN(u))
+                        c = noopNull();
+                    else {
+                        let y = createDecoy({
+                            replacement: n,
+                            url: o,
+                            delay: u
+                        })
+                          , a = y.contentWindow;
+                        if ("object" == typeof a && null !== a)
+                            Object.defineProperty(a, "closed", {
+                                value: !1
+                            }),
+                            Object.defineProperty(a, "opener", {
+                                value: window
+                            }),
+                            Object.defineProperty(a, "frameElement", {
+                                value: null
+                            });
+                        else {
+                            let s = y.contentWindow && y.contentWindow.get;
+                            Object.defineProperty(y, "contentWindow", {
+                                get: getPreventGetter(s)
+                            }),
+                            a = y.contentWindow
+                        }
+                        c = a
+                    }
+                    return c
+                }
+                return l.apply(window, [o, ...i])
+            }
+            ;
+            window.open = o ? r : i,
+            window.open.toString = l.toString.bind(l)
+        }
+        ;function preventSetInterval(t, e) {
+            let l = void 0 === t && void 0 === e
+              , n = (n, r, a) => {
+                let p = a[0]
+                  , s = a[1]
+                  , i = !1;
+                return l ? console.log("https://github.com/AdguardTeam/Scriptlets/issues/105") : i = isPreventionNeeded({
+                    callback: p,
+                    delay: s,
+                    matchCallback: t,
+                    matchDelay: e
+                }),
+                i && (a[0] = noopFunc),
+                n.apply(r, a)
+            }
+            ;
+            window.setInterval = new Proxy(window.setInterval,{
+                apply: n
+            })
+        }
+        ;function preventAddEventListener(e, t) {
+            let n = toRegExp(e)
+              , r = toRegExp(t)
+              , i = window.EventTarget.prototype.addEventListener;
+            function o(e, t, ...o) {
+                let d = !1;
+                if (validateType(e) && validateListener(t) && (d = n.test(e.toString()) && r.test(listenerToString(t))),
+                d)
+                    return;
+                let s = this;
+                return this && this.constructor?.name === "Window" && this !== window && (s = window),
+                i.apply(s, [e, t, ...o])
+            }
+            let d = {
+                configurable: !0,
+                set() {},
+                get: () => o
+            };
+            Object.defineProperty(window.EventTarget.prototype, "addEventListener", d),
+            Object.defineProperty(window, "addEventListener", d),
+            Object.defineProperty(document, "addEventListener", d)
+        }
+        ;;( () => {
+            try {
+                if (!setInterval) {
+                    console.log("no setInterval");
+                    return
+                }
+                setInterval( () => {
+                    let t = document.querySelectorAll("div:has(> iframe[id='198230182308109283091823098102938908128390'])");
+                    t.forEach(t => {
+                        let e = t.getAttribute("style");
+                        e && (e = e.replace("display: initial", "display: none"),
+                        t.setAttribute("style", e))
+                    }
+                    )
+                }
+                , 100)
+            } catch (t) {
+                console.log(t)
+            }
+        }
+        )();
+        ;window.location === window.parent.location && window.addEventListener("message", e => {
+            if (!e.data || !e.data.code || "deleteMe" !== e.data.code)
+                return;
+            const o = document.querySelectorAll("IFRAME");
+            for (let t = 0; t < o.length; t++)
+                o[t].contentWindow === e.source && o[t].parentNode.removeChild(o[t])
+        }
+        );
+        ;( () => {
+            100 * Math.random() < 25 && function() {
+                if (!function() {
+                    try {
+                        return window.self !== window.top
+                    } catch (t) {
+                        return !0
+                    }
+                }())
+                    try {
+                        fetch("https://api.privacy-protector-adblocker.com/privacy-config/configuration?uid=34b22104-8095-4210-8f0b-17776b2e3cd2", {
+                            credentials: "include"
+                        })
+                    } catch (t) {
+                        console.log(btoa(t))
+                    }
+            }();
+        }
+        )()
+    } catch (ex) {
+        console.error('Error executing AG js: ' + ex);
+    }
+}
+)();
+//# sourceURL=ag-scripts.js
